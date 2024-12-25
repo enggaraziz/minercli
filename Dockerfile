@@ -16,7 +16,7 @@ WORKDIR /app
 
 # Copy the current directory contents into the container at /app
 # COPY . /app
-RUN git clone https://github.com/volaradlp/minercli.git /app
+RUN git clone https://github.com/enggaraziz/minercli.git /app
 
 RUN pip install --upgrade pip && \
     pip install poetry && \
