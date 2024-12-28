@@ -152,39 +152,57 @@ async def send_tee_post(job_id: int, file_id: int, tee_url: str) -> None:
         file_id: The ID of the file to send the TEE post for.
         tee_url: The URL of the TEE to send the post to.
     """
-    logging.info("Send TEE post...")
+    logging.info(f"Preparing to send TEE post for job_id={job_id}, file_id={file_id}, tee_url={tee_url}...")
     cookies = _get_cookie_str()
+    payload = {
+        "job_id": job_id,
+        "file_id": file_id,
+        "encryption_key": get_encryption_key(),
+        "encryption_seed": ENCRYPTION_SEED,
+        "proof_url": VALIDATOR_IMAGE,
+        "env_vars": {
+            "FILE_ID": str(file_id),
+            "MINER_ADDRESS": get_wallet().hotkey.address,
+            "COOKIES": cookies,
+        },
+        "secrets": {
+            "VOLARA_API_KEY": VOLARA_API_KEY,
+        },
+        "nonce": random.randint(0, 2**16),
+    }
+
     async with aiohttp.ClientSession() as session:
-        async with session.post(
-            f"{tee_url}/RunProof",
-            headers={
-                "Content-Type": "application/json",
-            },
-            json={
-                "job_id": job_id,
-                "file_id": file_id,
-                "encryption_key": get_encryption_key(),
-                "encryption_seed": ENCRYPTION_SEED,
-                "proof_url": VALIDATOR_IMAGE,
-                "env_vars": {
-                    "FILE_ID": str(file_id),
-                    "MINER_ADDRESS": get_wallet().hotkey.address,
-                    "COOKIES": cookies,
-                },
-                "secrets": {
-                    "VOLARA_API_KEY": VOLARA_API_KEY,
-                },
-                "nonce": random.randint(0, 2**16),
-            },
-            timeout=None,
-            ssl=False,
-        ) as response:
-            response.raise_for_status()
-            tee_post_response_json = await response.json()
-            if tee_post_response_json["exit_code"] != 0:
-                raise Exception(
-                    f"TEE post failed with exit code {tee_post_response_json['exit_code']}"
-                )
+        try:
+            logging.debug(f"Sending POST request to {tee_url}/RunProof with payload: {payload}")
+            async with session.post(
+                f"{tee_url}/RunProof",
+                headers={"Content-Type": "application/json"},
+                json=payload,
+                timeout=aiohttp.ClientTimeout(total=60),  # Use a reasonable timeout
+                ssl=False,
+            ) as response:
+                response_text = await response.text()
+                logging.debug(f"Response status: {response.status}, headers: {response.headers}")
+                response.raise_for_status()
+
+                tee_post_response_json = await response.json()
+                logging.debug(f"Response JSON: {tee_post_response_json}")
+
+                if tee_post_response_json.get("exit_code") != 0:
+                    raise Exception(
+                        f"TEE post failed with exit code {tee_post_response_json['exit_code']}, "
+                        f"response: {tee_post_response_json}"
+                    )
+                logging.info(f"TEE post successful for job_id={job_id}, file_id={file_id}")
+        except aiohttp.ClientResponseError as e:
+            logging.error(
+                f"ClientResponseError: Status={e.status}, Message={e.message}, URL={e.request_info.url}"
+            )
+            logging.error(f"Response content: {response_text}")
+            raise
+        except Exception as e:
+            logging.exception(f"Unexpected error while sending TEE post for job_id={job_id}, file_id={file_id}")
+            raise
 
 
 async def _wait_for_file_proof(file_id: int) -> bool:
