@@ -50,8 +50,7 @@ def remove_active_account() -> None:
 
 
 def _set_active_account(username: str, password: str) -> None:
-    proxy = None
-    account = TweeterPy(proxies=proxy, log_level="DEBUG")
+    account = TweeterPy()
     account.login(username=username, password=password)
     os.makedirs(os.path.dirname(TMP_TWITTER_AUTH), exist_ok=True)
     with open(TMP_TWITTER_AUTH, "w") as file:
