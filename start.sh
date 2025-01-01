@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Name of the container
-CONTAINER_NAME="volara_miner"
+CONTAINER_NAME="volara_v2"
 
 # Function to check if the container exists
 container_exists() {
