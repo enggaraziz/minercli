@@ -55,7 +55,7 @@ async def mining_loop(account: Account) -> asyncio.Task[None]:
     while len(tweets) < TARGET_TWEET_COUNT:
         logger.info("Pulling tweets...")
         try:
-            timeline = account.home_latest_timeline(limit=TARGET_TWEET_COUNT)
+            timeline = account.home_timeline(limit=TARGET_TWEET_COUNT)
         except Exception:
             logger.exception("Error pulling timeline")
             logger.info(f"Sleeping {ERROR_SLEEP_INTERVAL}s for timeline refresh...")
