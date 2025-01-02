@@ -25,27 +25,26 @@ def get_wallet():
     return wallet
 
 
-# def get_chain_manager():
-#     config = vana.Config()
-#     config.chain = ChainConfig(network=NETWORK)
-#     if NETWORK == "vana":  # TODO: make this work with Vana lib
-#         config.chain = ChainConfig(network="https://rpc.vana.org")
-#     chain_manager = vana.ChainManager(config=config)
-#     chain_manager.web3 = Web3(Web3.HTTPProvider("https://rpc.vana.org"))
-#     chain_manager.web3.middleware_onion.inject(geth_poa_middleware, layer=0)
-#     return vana.ChainManager()
-
 def get_chain_manager():
     config = vana.Config()
-    if NETWORK == "vana":
-        config.chain = {"network": "vana", "chain_endpoint": "https://rpc.vana.org"}
-    else:
-        config.chain = {"network": NETWORK}
-    
-    print("Config.chain:", json.dumps(config.chain, indent=2))
-    
+    config.chain = ChainConfig(network=NETWORK)
+    if NETWORK == "vana":  # TODO: make this work with Vana lib
+        config.chain = ChainConfig(network="https://rpc.vana.org")
     chain_manager = vana.ChainManager(config=config)
     chain_manager.web3 = Web3(Web3.HTTPProvider("https://rpc.vana.org"))
     chain_manager.web3.middleware_onion.inject(geth_poa_middleware, layer=0)
     return vana.ChainManager()
+
+# def get_chain_manager():
+#     config = vana.Config()
+#     if NETWORK == "vana":
+#         config.chain = {"network": "vana", "chain_endpoint": "https://rpc.vana.org"}
+#     else:
+#         config.chain = {"network": NETWORK}
+    
+#     print("Config.chain:", json.dumps(config.chain, indent=2))
+    
+#     chain_manager = vana.ChainManager(config=config)
+#     chain_manager.web3 = Web3(Web3.HTTPProvider("https://rpc.vana.org"))
+#     chain_manager.web3.middleware_onion.inject(geth_poa_middleware, layer=0)
 #     return chain_manager
