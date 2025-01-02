@@ -33,7 +33,8 @@ def get_chain_manager():
     chain_manager = vana.ChainManager(config=config)
     chain_manager.web3 = Web3(Web3.HTTPProvider("https://rpc.vana.org"))
     chain_manager.web3.middleware_onion.inject(geth_poa_middleware, layer=0)
-    return vana.ChainManager()
+    return chain_manager
+    # return vana.ChainManager()
 
 # def get_chain_manager():
 #     config = vana.Config()
