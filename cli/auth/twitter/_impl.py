@@ -22,11 +22,11 @@ def get_active_account() -> T.Optional[Account]:
 
 
 def set_active_account() -> bool:
-    click.echo("Setting active twitter account...")
+    click.echo("Setting active X account...")
     if (username := os.environ.get("TWITTER_USERNAME")) is None:
-        username = click.prompt("Enter your twitter username")
+        username = click.prompt("Enter your X username")
     if (password := os.environ.get("TWITTER_PASSWORD")) is None:
-        password = click.prompt("Enter your twitter password", hide_input=True)
+        password = click.prompt("Enter your X password", hide_input=True)
     try:
         _set_active_account(username, password)
     except Exception as e:
@@ -36,17 +36,17 @@ def set_active_account() -> bool:
             err=True,
         )
         return False
-    click.echo("Active twitter account successfully set.")
+    click.echo("Active X account successfully set.")
     return True
 
 
 def remove_active_account() -> None:
-    click.echo("Removing active twitter account...")
+    click.echo("Removing active X account...")
     try:
         os.remove(TMP_TWITTER_AUTH)
-        click.echo("Active twitter account successfully removed.")
+        click.echo("Active X account successfully removed.")
     except FileNotFoundError:
-        click.echo("No active twitter account found.")
+        click.echo("No active X account found.")
 
 
 def _set_active_account(username: str, password: str) -> None:
