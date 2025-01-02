@@ -31,7 +31,7 @@ echo -e "
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "
 
-CONTAINER_NAME="volara_v4"
+# CONTAINER_NAME="volara_v4"
 
 # Function to check if the container exists
 container_exists() {
@@ -103,6 +103,10 @@ prompt_user_input() {
     read -p "Enter your burner wallet's private key: " VANA_PRIVATE_KEY
 }
 
+prompt_container_input() {
+    read -p "Enter your container name: " CONTAINER_NAME
+}
+
 run_docker_containers() {
     if ! container_exists; then
         run_container
@@ -125,6 +129,7 @@ run_docker_containers() {
 if ! check_docker_installed; then
     install_docker
 fi
+prompt_container_input
 
 pull_volara_image
 
