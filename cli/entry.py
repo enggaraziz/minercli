@@ -57,9 +57,9 @@ def start(background: bool):
     if drive_auth.get_active_account() is None:
         click.echo("No active drive account found. Requesting credentials...")
         drive_auth.set_active_account()
-    click.echo("Checking twitter account credentials...")
+    click.echo("Checking X account credentials...")
     if twitter_auth.get_active_account() is None:
-        click.echo("No active twitter account found. Requesting credentials...")
+        click.echo("No active X account found. Requesting credentials...")
         if not twitter_auth.set_active_account():
             click.echo("Exiting...")
             return
